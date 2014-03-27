@@ -24,6 +24,8 @@ DEV_USERS = {
     'test@test.com': ['Test', 'Tester', 'test', 'testpassword'],
     'maxpete@iastate.edu': ['Max', 'Peterson', 'maxpete', 'vinz'],
     'mpdavis@iastate.edu': ['Michael', 'Davis', 'mpdavis', 'vinz'],
+    'xiaoqin@iastate.edu': ['Xiao', 'Qin', 'qinxiaoapp', 'vinz'],
+
 }
 
 
