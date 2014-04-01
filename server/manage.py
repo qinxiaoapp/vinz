@@ -27,8 +27,12 @@ DEV_USERS = {
     'vinz@test.com': ['Vinz', 'Vinzer', 'vinz', 'vinz'],
     'maxpete@iastate.edu': ['Max', 'Peterson', 'maxpete', 'vinz'],
     'mpdavis@iastate.edu': ['Michael', 'Davis', 'mpdavis', 'vinz'],
+<<<<<<< HEAD
     'xiaoqin@iastate.edu': ['Xiao', 'Qin', 'qinxiaoapp', 'vinz'],
 
+=======
+    'jhummel@iastate.edu': ['Jake', 'Hummel', 'jhummel', 'vinz'],
+>>>>>>> upstream/master
 }
 
 
@@ -101,6 +105,30 @@ def remove_user(username):
 def get_keys():
     from scanner.api import ssh_key
     print ssh_key.get_authorized_keys_for_host('vinz-debian.student.iastate.edu', ['root', 'vinz', 'michael'])
+
+
+@manager.command
+def add_public_key(username, filename):
+    from scanner.api import ssh_key
+    host = 'vinz-ubuntu.student.iastate.edu'
+    with open(filename) as f:
+        result = ssh_key.add_user_public_key(username, [host], f.read())
+    if result[host]['success']:
+        print 'Successfully added key for user %s to host %s' % (username, host)
+    else:
+        print 'FAIL: %s' % (result[host]['error'])
+
+
+@manager.command
+def remove_public_key(username, filename):
+    from scanner.api import ssh_key
+    host = 'vinz-ubuntu.student.iastate.edu'
+    with open(filename) as f:
+        result = ssh_key.remove_user_public_key(username, [host], f.read())
+    if result[host]['success']:
+        print 'Successfully added key for user %s to host %s' % (username, host)
+    else:
+        print 'FAIL: %s' % (result[host]['error'])
 
 
 @manager.command
