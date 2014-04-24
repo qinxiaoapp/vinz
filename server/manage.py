@@ -34,16 +34,9 @@ DEV_USERS = {
     'vinz@test.com': ['Vinz', 'Vinzer', 'vinz', 'vinz'],
     'maxpete@iastate.edu': ['Max', 'Peterson', 'maxpete', 'vinz'],
     'mpdavis@iastate.edu': ['Michael', 'Davis', 'mpdavis', 'vinz'],
-<<<<<<< HEAD
     'xiaoqin@iastate.edu': ['Xiao', 'Qin', 'qinxiaoapp', 'vinz'],
-
-=======
     'jhummel@iastate.edu': ['Jake', 'Hummel', 'jhummel', 'vinz'],
-<<<<<<< HEAD
->>>>>>> upstream/master
-=======
     'zheilman@iastate.edu': ['Zach', 'Heilman', 'zheilman', 'vinz'],
->>>>>>> upstream/master
 }
 
 VINZ_PUBLIC_KEY = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCrFNYehGLTslKj+YBUv4Uo2Gb2QB2IvnkTUY6JbEpl0USrObi8q+kWuV5Yhk+eUszxqu4vIIkFw1B3UK8CH76W5Fu3pcFXhBpui0h/IvDHLePmddFfx/kptdZ0qCs0VxrZgltpjCD8PtWx5nde10xYLI6V/j6yFLao/flB0qt0SJxoIbUdI0Zk99TzOmR4A5yGdW158Nvcsd+bwXshHfmjn3uafksjdSnlcqyNClo1oR3pUJKX9dQuyLA6hlGzF5/f2Sf+eggOkpLcvY7/yStfQMFF6uLZq9DHQAlXsEVnFOmHBGqoFcRKNmV2I7kcJL9QMVxWJrNIkLjBmyxACCsf example@getvinz.com'
@@ -62,9 +55,9 @@ def setup_dev():
         try:
             server = internal_server.create_server(None, name, url)
             servers.append(server)
-            print "Created server %s: %s" % (name, url)
+            print ("Created server %s: %s" % (name, url))
         except ServerAlreadyExistsError:
-            print "Server %s already exists" % name
+            print ("Server %s already exists" % name)
             server = internal_server.get_server_by_hostname(url)
             servers.append(server)
 
@@ -72,18 +65,18 @@ def setup_dev():
         user = None
         try:
             user = internal_user.create_user(None, data[0], data[1], email, data[2], data[3])
-            print "Created user %s: %s" % (data[2], email)
+            print ("Created user %s: %s" % (data[2], email))
         except UserAlreadyExistsError:
             user = internal_user.get_user_by_email(email)
-            print "User %s already exists" % (data[2])
+            print ("User %s already exists" % (data[2]))
 
         if user:
             for server in servers:
-                print "Adding %s to %s" % (user.username, server.hostname)
+                print ("Adding %s to %s" % (user.username, server.hostname))
                 internal_server.add_user_to_server(None, server, user.id)
 
             if not user.key_list:
-                print "Adding public key for %s" % user.username
+                print ("Adding public key for %s" % user.username)
                 key = internal_public_key.create_public_key(user, user, 'test key', VINZ_PUBLIC_KEY)
 
 
@@ -104,10 +97,10 @@ def setup_cron():
 @manager.command
 def get_users():
     from scanner.api import user
-    print user.get_users_on_host('vinz-debian.student.iastate.edu')
-    print user.get_users_on_host('vinz-fedora.student.iastate.edu')
-    print user.get_users_on_host('vinz-opensuse.student.iastate.edu')
-    print user.get_users_on_host('vinz-centos.student.iastate.edu')
+    print (user.get_users_on_host('vinz-debian.student.iastate.edu'))
+    print (user.get_users_on_host('vinz-fedora.student.iastate.edu'))
+    print (user.get_users_on_host('vinz-opensuse.student.iastate.edu'))
+    print (user.get_users_on_host('vinz-centos.student.iastate.edu'))
 
 
 @manager.command
@@ -125,7 +118,7 @@ def remove_user(username):
 @manager.command
 def get_keys():
     from scanner.api import ssh_key
-    print ssh_key.get_authorized_keys_for_host('vinz-debian.student.iastate.edu', ['root', 'vinz', 'michael'])
+    print (ssh_key.get_authorized_keys_for_host('vinz-debian.student.iastate.edu', ['root', 'vinz', 'michael']))
 
 
 @manager.command
@@ -135,9 +128,9 @@ def add_public_key(username, filename):
     with open(filename) as f:
         result = ssh_key.add_user_public_key(username, [host], f.read())
     if result[host]['success']:
-        print 'Successfully added key for user %s to host %s' % (username, host)
+        print ('Successfully added key for user %s to host %s' % (username, host))
     else:
-        print 'FAIL: %s' % (result[host]['error'])
+        print ('FAIL: %s' % (result[host]['error']))
 
 
 @manager.command
@@ -147,9 +140,9 @@ def remove_public_key(username, filename):
     with open(filename) as f:
         result = ssh_key.remove_user_public_key(username, [host], f.read())
     if result[host]['success']:
-        print 'Successfully added key for user %s to host %s' % (username, host)
+        print ('Successfully added key for user %s to host %s' % (username, host))
     else:
-        print 'FAIL: %s' % (result[host]['error'])
+        print ('FAIL: %s' % (result[host]['error']))
 
 
 @manager.command
