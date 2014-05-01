@@ -5,52 +5,53 @@ var app = angular.module('vinzApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'infinite-scroll'
+  'infinite-scroll',
+  'highcharts-ng'
 ])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'static/views/dashboard.html',
+        templateUrl: '/static/views/dashboard.html',
         controller: 'DashboardCtrl'
       })
       .when('/servers', {
-        templateUrl: 'static/views/servers.html',
+        templateUrl: '/static/views/servers.html',
         controller: 'ServersCtrl'
       })
       .when('/users', {
-        templateUrl: 'static/views/users.html',
+        templateUrl: '/static/views/users.html',
         controller: 'UsersCtrl'
       })
       .when('/servers/:id', {
-        templateUrl: 'static/views/server_detail.html',
+        templateUrl: '/static/views/server_detail.html',
         controller: 'ServerDetailCtrl'
       })
       .when('/logs', {
-        templateUrl: 'static/views/logs.html',
+        templateUrl: '/static/views/logs.html',
         controller: 'LogsCtrl'
       })
       .when('/public_key', {
-        templateUrl: 'static/views/public_key.html',
+        templateUrl: '/static/views/public_key.html',
         controller: 'PublicKeyCtrl'
       })
       .when('/server_groups', {
-        templateUrl: 'static/views/server_groups.html',
+        templateUrl: '/static/views/server_groups.html',
         controller: 'ServerGroupsCtrl'
       })
       .when('/server_groups/:id', {
-        templateUrl: 'static/views/server_group_detail.html',
+        templateUrl: '/static/views/server_group_detail.html',
         controller: 'ServerGroupDetailCtrl'
       })
       .when('/user_groups', {
-        templateUrl: 'static/views/user_groups.html',
+        templateUrl: '/static/views/user_groups.html',
         controller: 'UserGroupsCtrl'
       })
       .when('/user_groups/:id', {
-        templateUrl: 'static/views/user_group_detail.html',
+        templateUrl: '/static/views/user_group_detail.html',
         controller: 'UserGroupDetailCtrl'
       })
       .when('/dashboard', {
-        templateUrl: 'static/views/dashboard.html',
+        templateUrl: '/static/views/dashboard.html',
         controller: 'DashboardCtrl'
       })
       .otherwise({
@@ -78,4 +79,8 @@ app.config(['$httpProvider', function($httpProvider){
     }
   }];
   $httpProvider.responseInterceptors.push(interceptor);
+}]);
+
+app.config(['$locationProvider', function($locationProvider){
+  $locationProvider.html5Mode(true);
 }]);

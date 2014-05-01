@@ -1,3 +1,4 @@
+import datetime
 import pprint
 
 from crontab import CronTab
@@ -57,9 +58,9 @@ def setup_dev():
         try:
             server = internal_server.create_server(system_user, name, url)
             servers.append(server)
-            print ("Created server %s: %s" % (name, url))
+            print "Created server %s: %s" % (name, url)
         except ServerAlreadyExistsError:
-            print ("Server %s already exists" % name)
+            print "Server %s already exists" % name
             server = internal_server.get_server_by_hostname(url)
             servers.append(server)
 
@@ -67,18 +68,18 @@ def setup_dev():
         user = None
         try:
             user = internal_user.create_user(system_user, data[0], data[1], email, data[2], data[3])
-            print ("Created user %s: %s" % (data[2], email))
+            print "Created user %s: %s" % (data[2], email)
         except UserAlreadyExistsError:
             user = internal_user.get_user_by_email(email)
-            print ("User %s already exists" % (data[2]))
+            print "User %s already exists" % (data[2])
 
         if user:
             for server in servers:
-                print ("Adding %s to %s" % (user.username, server.hostname))
+                print "Adding %s to %s" % (user.username, server.hostname)
                 internal_server.add_user_to_server(system_user, server, user.id)
 
             if not user.key_list:
-                print ("Adding public key for %s" % user.username)
+                print "Adding public key for %s" % user.username
                 key = internal_public_key.create_public_key(user, user, 'test key', VINZ_PUBLIC_KEY)
 
 
@@ -99,10 +100,10 @@ def setup_cron():
 @manager.command
 def get_users():
     from scanner.api import user
-    print (user.get_users_on_host('vinz-debian-7.student.iastate.edu'))
-    print (user.get_users_on_host('vinz-fedora.student.iastate.edu'))
-    print (user.get_users_on_host('vinz-opensuse.student.iastate.edu'))
-    print (user.get_users_on_host('vinz-centos.student.iastate.edu'))
+    print user.get_users_on_host('vinz-debian-7.student.iastate.edu')
+    print user.get_users_on_host('vinz-fedora.student.iastate.edu')
+    print user.get_users_on_host('vinz-opensuse.student.iastate.edu')
+    print user.get_users_on_host('vinz-centos.student.iastate.edu')
 
 
 @manager.command
@@ -120,7 +121,7 @@ def remove_user(username):
 @manager.command
 def get_keys():
     from scanner.api import ssh_key
-    print (ssh_key.get_authorized_keys_for_host('vinz-debian.student.iastate.edu', ['root', 'vinz', 'michael']))
+    print ssh_key.get_authorized_keys_for_host('vinz-debian.student.iastate.edu', ['root', 'vinz', 'michael'])
 
 
 @manager.command
@@ -130,9 +131,9 @@ def add_public_key(username, filename):
     with open(filename) as f:
         result = ssh_key.add_user_public_key(username, [host], f.read())
     if result[host]['success']:
-        print ('Successfully added key for user %s to host %s' % (username, host))
+        print 'Successfully added key for user %s to host %s' % (username, host)
     else:
-        print ('FAIL: %s' % (result[host]['error']))
+        print 'FAIL: %s' % (result[host]['error'])
 
 
 @manager.command
@@ -142,9 +143,9 @@ def remove_public_key(username, filename):
     with open(filename) as f:
         result = ssh_key.remove_user_public_key(username, [host], f.read())
     if result[host]['success']:
-        print ('Successfully added key for user %s to host %s' % (username, host))
+        print 'Successfully added key for user %s to host %s' % (username, host)
     else:
-        print ('FAIL: %s' % (result[host]['error']))
+        print 'FAIL: %s' % (result[host]['error'])
 
 
 @manager.command
@@ -153,11 +154,50 @@ def scan():
     s = Scanner(debug=False, add_users=True, remove_users=True, add_keys=True, remove_keys=True)
     results = s.scan()
 
+
 @manager.command
 def debug_scan():
     from scanner.scanner import Scanner
     s = Scanner(debug=True, add_users=True, remove_users=True, add_keys=True, remove_keys=True)
     results = s.scan()
+
+
+@manager.command
+def fake_scans():
+    from models.audit import ScanLog
+    from internal.server import get_server_by_hostname
+
+    server = get_server_by_hostname('vinz-ubuntu-12-04.student.iastate.edu')
+
+    now = datetime.datetime.now()
+    for day_index in xrange(7):
+        day_delta = now - datetime.timedelta(days=day_index)
+
+
+        print "working on %s days ago" % day_index
+
+        number_of_servers = 814
+        if day_index > 4:
+            number_of_servers = 598
+
+        print number_of_servers
+        for log_index in xrange(number_of_servers):
+
+            log = ScanLog(
+                server=server,
+                server_status=0,
+                timestamp=day_delta,
+                status=0,
+                users_expected=[],
+                actual_users=[],
+                unexpected_users=[],
+                keys_added=[],
+                keys_removed=[],
+                unexpected_keys=[],
+            )
+
+            log.save()
+
 
 if __name__ == "__main__":
     manager.run()
